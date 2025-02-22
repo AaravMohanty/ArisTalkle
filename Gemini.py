@@ -16,7 +16,17 @@ Let the user input from dropdown the side they want the AI to take (affirmative 
 '''
 difficulty = "High School"
 side = "Negation"
-rubric = "Give the speaker a rubric rating on these 5 categories on a scale of 0-100 for tone/inflection, information, use of facts/statistics, organization, and understanding of topic, and write them out of 100, and put an overall grade based on the average score. Then, compose a rubric report for the speaker with comments on what they did and what they can improve on, and give me the output in LaTeX. Don't put any of your comments outside the latex, I just want the LaTeX code so I can directly put it into a converter. Try to make it one page long max."
+rubric_prompt = (
+    "Give the speaker a rubric rating on these 5 categories on a scale of 0-100 for "
+    "tone/inflection, information, use of facts/statistics, organization, and "
+    "understanding of topic, and write them out of 100, and put an overall grade "
+    "based on the average score. Then, compose a rubric report for the speaker "
+    "with comments on what they did and what they can improve on, and give me the "
+    "output in LaTeX. Don't put any of your comments outside the latex, I just want "
+    "the LaTeX code so I can directly put it into a converter. Try to make it one "
+    "page long max."
+)
+
 print("Uploading file...")
 video_file = client.files.upload(file="PXL_20250222_055516937.mp4")
 print(f"Completed upload: {video_file.uri}")
@@ -32,12 +42,17 @@ if video_file.state.name == "FAILED":
 print('Done')
 
 response = client.models.generate_content(
-    model="gemini-2.0-flash", contents=[video_file, 
-    "You are debating this speaker. Provide an argument for the " + side + " side, in under 250 words, and at a " + difficulty + " level of competition (your difficulty)"]
+    model="gemini-2.0-flash",
+    contents=[
+        video_file,
+        f"You are debating this speaker. Provide an argument for the {side} side, "
+        f"in under 250 words, and at a {difficulty} level of competition (your difficulty)"
+    ]
 )
 
 rubric = client.models.generate_content(
-    model="gemini-2.0-flash", contents=[video_file, rubric]
+    model="gemini-2.0-flash",
+    contents=[video_file, rubric_prompt]
 )
 
 print(response.text)
@@ -60,3 +75,6 @@ try:
     print("PDF generated: rubric.pdf")
 except subprocess.CalledProcessError as e:
     print(f"Error compiling LaTeX: {e}")
+
+def get_response_text():
+    return response.text
