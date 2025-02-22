@@ -1,7 +1,7 @@
 import os
 import subprocess
 from cartesia import Cartesia
-from Gemini import response_text
+from Gemini import get_response_text
 
 # Ensure API key is set
 API_KEY = os.environ.get("CARTESIA_API_KEY")
