@@ -1,6 +1,7 @@
 import os
 import subprocess
 from cartesia import Cartesia
+from Gemini import response_text
 
 # Ensure API key is set
 API_KEY = os.environ.get("CARTESIA_API_KEY")
@@ -10,14 +11,11 @@ if not API_KEY:
 # Initialize Cartesia Client
 client = Cartesia(api_key=API_KEY)
 
-# Define text to convert
-transcript_text = "Hello, world! I'm generating audio using the Cartesia API."
-
 # Configure Text-to-Speech request
 try:
     audio_data = client.tts.bytes(
         model_id="sonic",  # Ensure this model ID is correct
-        transcript=transcript_text,
+        transcript=response_text,
         voice_id="694f9389-aac1-45b6-b726-9d9369183238",  # Example: Barbershop Man
         output_format={
             "container": "mp3",
