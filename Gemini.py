@@ -1,7 +1,6 @@
 import os
 from google import genai
 import time
-import sys
 import subprocess
 
 # Retrieve the API key from environment variables
@@ -12,12 +11,7 @@ if not api_key:
 # Initialize the client with the API key
 client = genai.Client(api_key=api_key)
 
-if len(sys.argv) > 1:
-    mp4_file_path = sys.argv[1]
-else:
-    # Fallback or raise an error
-    raise ValueError("No MP4 file specified. Provide a filename as the first argument.")
-
+# Define debate parameters
 difficulty = "High School"
 side = "Negation"
 rubric_prompt = (
@@ -33,9 +27,10 @@ rubric_prompt = (
 
 # Upload the video file
 print("Uploading file...")
-video_file = client.files.upload(file=mp4_file_path)
+video_file = client.files.upload(file="PXL_20250222_055516937.mp4")
 print(f"Completed upload: {video_file.uri}")
 
+# Wait for the file to process
 while video_file.state.name == "PROCESSING":
     print('.', end='')
     time.sleep(1)
@@ -56,42 +51,32 @@ response = client.models.generate_content(
     ]
 )
 
+# Generate the rubric
 rubric = client.models.generate_content(
     model="gemini-2.0-flash",
     contents=[video_file, rubric_prompt]
 )
 
-if not os.path.exists("output"):
-    os.makedirs("output")
+# Print the debate response
+print(response.text)
 
-# Trim the rubric text
+# Trim the rubric text (remove first and last lines if needed)
 rubric_lines = rubric.text.split("\n")
 trimmed_rubric = "\n".join(rubric_lines[1:-1])
 
-# Write to output/rubric.tex
-tex_path = os.path.join("output", "rubric.tex")
-with open(tex_path, "w") as f:
+# Write the rubric to a .tex file
+with open("rubric.tex", "w") as f:
     f.write(trimmed_rubric)
 
-print("LaTeX code saved to output/rubric.tex")
+print("LaTeX code saved to rubric.tex")
 
-# Compile rubric.tex in the output folder
-# pdflatex has a flag to specify the output directory.
+# Compile the LaTeX file to PDF
 try:
-    subprocess.run(["pdflatex", 
-                    "-output-directory=output", tex_path], check=True)
-    print("PDF generated: output/rubric.pdf")
-
-    # Clean up auxiliary files in the output folder
-    for ext in [".aux", ".log", ".tex"]:
-        aux_file = os.path.join("output", f"rubric{ext}")
-        if os.path.exists(aux_file):
-            os.remove(aux_file)
-
-    print("Cleaned up auxiliary files in output/")
-
+    subprocess.run(["pdflatex", "rubric.tex"], check=True)
+    print("PDF generated: rubric.pdf")
 except subprocess.CalledProcessError as e:
     print(f"Error compiling LaTeX: {e}")
+
 # Function to provide response text to Text_To_Speech.py
 def get_response_text():
     return response.text
