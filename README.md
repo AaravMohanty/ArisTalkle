@@ -12,3 +12,5 @@ Ensure you have python version 3.7 installed and then pip install the following:
 - pip install IPython
 - pip install cartesia
 - pip install ffmpeg
+
+Install pdflatex (installation depends on operating system).
