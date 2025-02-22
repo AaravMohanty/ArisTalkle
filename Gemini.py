@@ -1,8 +1,13 @@
+import os
 from google import genai
 import time
 import subprocess
 
-client = genai.Client(api_key="API_KEY")
+api_key = os.getenv("GOOGLE_GENAI_API_KEY")
+if not api_key:
+    raise ValueError("API key not found! Set GOOGLE_GENAI_API_KEY in your environment variables.")
+
+client = genai.Client(api_key=api_key)
 '''
 The level of difficulty chosen in a dropdown: 
 beginner, middle schooler, high schooler, collegiate, professional
@@ -47,10 +52,6 @@ trimmed_rubric = "\n".join(rubric_lines[1:-1])
 with open("rubric.tex", "w") as f:
     f.write(trimmed_rubric)
 
-'''
-with open("rubric.tex", "w") as f:
-    f.write(rubric.text)
-'''
 print("LaTeX code saved to rubric.tex")
 
 # Compile rubric.tex directly with pdflatex
