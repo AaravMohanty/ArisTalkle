@@ -7,7 +7,7 @@
 4. Pradyun Tandra
 
 #### Installation Guide
-pip install -q -U google-genai
-pip install IPython
-pip install cartesia
-pip install ffmpeg
+- pip install -q -U google-genai
+- pip install IPython
+- pip install cartesia
+- pip install ffmpeg
