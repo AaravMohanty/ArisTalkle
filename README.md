@@ -9,7 +9,6 @@
 #### Installation Guide
 Ensure you have python version 3.7 installed and then pip install the following:
 - pip install -q -U google-genai
-- pip install IPython
 - pip install cartesia
 - pip install ffmpeg
 
