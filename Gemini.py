@@ -3,7 +3,7 @@ import time
 from IPython.display import Markdown
 
 
-client = genai.Client(api_key="AIzaSyCiC8PLJZI-KSyJSNPH-tjui06OKRFc7II")
+client = genai.Client(api_key="API_KEY")
 '''
 The level of difficulty chosen in a dropdown: 
 beginner, middle schooler, high schooler, collegiate, professional
@@ -28,7 +28,7 @@ print('Done')
 
 response = client.models.generate_content(
     model="gemini-2.0-flash", contents=[video_file, 
-    "You are debating this speaker. Provide an argument for the " + side " side, in under 250 words, and at a " + difficulty + " level of competition (your difficulty)"]
+    "You are debating this speaker. Provide an argument for the " + side + " side, in under 250 words, and at a " + difficulty + " level of competition (your difficulty)"]
 )
 
 print(response.text)
