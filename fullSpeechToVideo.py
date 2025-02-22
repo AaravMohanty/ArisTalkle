@@ -115,17 +115,3 @@ def poll_and_download(api_key, job_id):
         time.sleep(5)
 
     print("Process completed.")
-
-def main():
-    api_key = "sk-bsCWymbQTGOdz8pDgXfUzw.bLxkLeJ_tHxhifLXgw7WQynJ4FmnjOjJ"  # Replace with your actual API key
-    video_url = "https://lfldehquopamazavycth.supabase.co/storage/v1/object/public/sync-public/david_demo_shortvid.mp4?t=2023-10-12T08%3A14%3A44.537Z"
-    audio_url = "https://www.dropbox.com/scl/fi/17osslll0x5cjn2os4frj/sonic_output.wav?rlkey=4svebnvp75ln52hqh6c9ak60x&st=2utluuaf&raw=1"
-
-    job_id = generate_video(api_key, video_url, audio_url)
-
-    if job_id:
-        print("Reached poll and download.")
-        poll_and_download(api_key, job_id)
-
-if __name__ == "__main__":
-    main()
