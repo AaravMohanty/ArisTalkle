@@ -27,3 +27,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Failed to create debate" }, { status: 500 });
   }
 }
+
+export async function GET(req: Request) {
+  try {
+    await dbConnect();
+
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+    }
+
+    const debates = await Debate.find({ userId }).sort({ date: -1 }); // Fetch debates for user, newest first
+
+    return NextResponse.json(debates);
+  } catch (error) {
+    console.error("Error fetching debates:", error);
+    return NextResponse.json({ error: "Failed to fetch debates" }, { status: 500 });
+  }
+}
