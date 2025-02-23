@@ -89,7 +89,7 @@ def process_video_endpoint():
     local_ai_video_path = os.path.join(OUTPUT_FOLDER, ai_video_filename)
 
     job_id = generate_video(sync_api_key,
-        "https://www.dropbox.com/scl/fi/ac4321y0somt6nkqk14n8/person_talking.mp4.mp4?rlkey=6sf3u7o4s4s4dr4uvbyt98qqp&st=8l6yipox&raw=1",
+        "https://www.dropbox.com/scl/fi/8mpjliato4gwgqznuwyly/aristotle.mp4?rlkey=adypicbfgrfujx15xdst08eoc&st=mla3t6f3&raw=1",
         audio_url
     )
     if not job_id:
