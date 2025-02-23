@@ -30,15 +30,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     console.log("Received Scores:", scores);
     console.log("Overall Score:", overallScore);
 
-    // ✅ **Map the frontend scores correctly to the database schema**
-    debate.rubricScores = {
-      toneInflection: scores["Tone/Inflection"] || 0,
-      information: scores["Information"] || 0,
-      useOfFactsStatistics: scores["Use of Facts/Statistics"] || 0,
-      organization: scores["Organization"] || 0,
-      understandingOfTopic: scores["Understanding of Topic"] || 0,
-    };
-
+    debate.rubricScores = scores;
     debate.overallScore = overallScore;
     debate.completed = true; // ✅ Mark debate as completed
 

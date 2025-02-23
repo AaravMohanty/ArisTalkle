@@ -18,24 +18,6 @@ export default function DebateResult({ params }: { params: { id: string } }) {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchDebate = async () => {
-      try {
-        const response = await fetch(`/api/debates/${params.id}`);
-        if (response.ok) {
-          const debateData = await response.json();
-          setDebate(debateData);
-        } else {
-          console.error("Failed to fetch debate");
-        }
-      } catch (error) {
-        console.error("Error fetching debate:", error);
-      }
-    };
-
-    fetchDebate();
-  }, [params.id]);
-
-  useEffect(() => {
     const fetchScores = async () => {
       console.log("Fetching scores...");
       try {
@@ -54,17 +36,39 @@ export default function DebateResult({ params }: { params: { id: string } }) {
           const roundedScore = Math.round(averageScore);
           setOverallScore(roundedScore);
   
-          // ✅ **Ensure correct field mappings when sending to API**
-          await fetch(`/api/debates/${params.id}`, {
+          // ✅ **Rename fields before sending to API**
+          const renamedScores = {
+            toneInflection: scoresData["Tone/Inflection"] || 0,
+            information: scoresData["Information"] || 0,
+            useOfFactsStatistics: scoresData["Use of Facts/Statistics"] || 0,
+            organization: scoresData["Organization"] || 0,
+            understandingOfTopic: scoresData["Understanding of Topic"] || 0,
+          };
+
+          console.log("Sending PATCH with data:", {
+            scores: renamedScores, // ✅ Correct field mappings
+            overallScore: roundedScore,
+            completed: true,
+          });
+          
+          // ✅ Send updated scores and status to backend
+          const patchResponse = await fetch(`/api/debates/${params.id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              scores: scoresData, // ✅ Matches new field mapping
+              scores: renamedScores, // ✅ Correct field mappings
               overallScore: roundedScore,
+              completed: true, // ✅ Mark debate as completed
             }),
           });
   
-          console.log("Debate updated in database.");
+          if (!patchResponse.ok) throw new Error("Failed to update debate");
+  
+          const updatedDebate = await patchResponse.json();
+          console.log("Updated Debate:", updatedDebate);
+  
+          // ✅ Update state with new debate data
+          setDebate(updatedDebate.debate);
         }
       } catch (error) {
         console.error("Error fetching extracted scores:", error);
@@ -72,8 +76,8 @@ export default function DebateResult({ params }: { params: { id: string } }) {
     };
   
     fetchScores();
-  }, []);  
-
+  }, []); // Runs once on mount  
+  
   const handleDownloadReport = async () => {
     try {
       const response = await fetch("http://127.0.0.1:5000/download_rubric");
