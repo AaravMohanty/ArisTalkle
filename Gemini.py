@@ -2,6 +2,7 @@ import os
 import time
 import subprocess
 from google import genai
+import json
 
 def generate_debate_response(api_key, video_path, difficulty="High School", side="Negation"):
     """
@@ -67,7 +68,7 @@ def generate_rubric(api_key, video_path, output_path="output/rubric.tex"):
         subprocess.run(["pdflatex", "-output-directory", "output", output_path], check=True)
         print("Rubric PDF generated: output/rubric.pdf")
         
-        for ext in [".aux", ".log", ".tex", ".out"]:
+        for ext in [".aux", ".log", ".out"]:
             aux_file = os.path.join("output", f"rubric{ext}")
             if os.path.exists(aux_file):
                 os.remove(aux_file)
@@ -77,4 +78,25 @@ def generate_rubric(api_key, video_path, output_path="output/rubric.tex"):
 
     return "output/rubric.pdf"
 
+def extract_scores_from_tex(tex_file_path, json_file_path):
+    scores = {}
+    with open(tex_file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
 
+    for line in lines:
+        line = line.strip()
+        if line.startswith(r"\item") and "/100" in line:
+            parts = line.split(":")
+            if len(parts) == 2:
+                category_part = parts[0].replace(r"\item", "").strip()  
+                score_part = parts[1].replace("/100", "").strip()
+                try:
+                    score_value = int(score_part)
+                except ValueError:
+                    score_value = None
+
+                if score_value is not None:
+                    scores[category_part] = score_value
+
+    with open(json_file_path, "w", encoding="utf-8") as f:
+        json.dump(scores, f, indent=2)
