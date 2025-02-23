@@ -76,3 +76,5 @@ def generate_rubric(api_key, video_path, output_path="output/rubric.tex"):
         print(f"Error compiling LaTeX: {e}")
 
     return "output/rubric.pdf"
+
+

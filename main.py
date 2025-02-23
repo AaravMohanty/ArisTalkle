@@ -17,18 +17,22 @@ def main():
     #D_ID_API_KEY = "your-d-id-api-key"
 
     # User uploaded video path
-    user_video_path = "video.mp4"
+    user_video_path = "BoilerMakeXII/video.mp4"
     
 
     # Step 1: Generate AI counterpoints
     debate_text = generate_debate_response(os.getenv("GOOGLE_GENAI_API_KEY"), user_video_path)
     print(f"Debate Response:\n{debate_text}")
-
-    # Step 2: Convert AI response to speech
+    
+    # Step 2: Generate debate rubric & evaluation
+    rubric_pdf_path = generate_rubric(os.getenv("GOOGLE_GENAI_API_KEY"), user_video_path)
+    print(f"Rubric PDF generated at: {rubric_pdf_path}")
+    
+    # Step 3: Convert AI response to speech
     audio_path = text_to_speech(os.getenv("CARTESIA_API_KEY"), debate_text)
     print(f"Audio generated at: {audio_path}")
 
-    #step 3: make the video
+    #step 4: make the video
     api_key = "sk-bsCWymbQTGOdz8pDgXfUzw.bLxkLeJ_tHxhifLXgw7WQynJ4FmnjOjJ"  # Replace with your actual API key
     video_url = "https://lfldehquopamazavycth.supabase.co/storage/v1/object/public/sync-public/david_demo_shortvid.mp4?t=2023-10-12T08%3A14%3A44.537Z"
     audio_url = "https://www.dropbox.com/scl/fi/ikb0mu6rz30rnexd7c3ct/response_audio.wav?rlkey=6sdxkqi4cczejv2c094yvikz5&st=h6wa40jq&raw=1"
@@ -39,8 +43,6 @@ def main():
         print("Reached poll and download.")
         poll_and_download(api_key, job_id)
 
-    # Step 4: Generate debate rubric & evaluation
-    rubric_pdf_path = generate_rubric(os.getenv("GOOGLE_GENAI_API_KEY"), user_video_path)
-    print(f"Rubric PDF generated at: {rubric_pdf_path}")
+    
 if __name__ == "__main__":
     main()
