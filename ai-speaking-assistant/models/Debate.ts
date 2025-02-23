@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
-const TranscriptSchema = new mongoose.Schema({
-    text: {type: String,},
-    aiFeedback: {type: String},
-});
+// const TranscriptSchema = new mongoose.Schema({
+//     text: {type: String,},
+//     aiFeedback: {type: String},
+// });
 
 const DebateSchema = new mongoose.Schema(
     {
@@ -15,12 +15,12 @@ const DebateSchema = new mongoose.Schema(
             type: String,
             enum: ["Elementary School", "High School", "University"],
         },
-        transcript: {
-            opening: {type: TranscriptSchema,},
-            questioning: {type: TranscriptSchema,},
-            rebuttals: {type: TranscriptSchema,},
-            closingStatements: {type: TranscriptSchema,},
-        },
+        // transcript: {
+        //     opening: {type: TranscriptSchema,},
+        //     questioning: {type: TranscriptSchema,},
+        //     rebuttals: {type: TranscriptSchema,},
+        //     closingStatements: {type: TranscriptSchema,},
+        // },
         rubricScores: {
             toneInflection: {type: Number, min: 0, max: 10, default: 0},
             information: {type: Number, min: 0, max: 10, default: 0},
