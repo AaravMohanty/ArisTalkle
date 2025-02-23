@@ -11,7 +11,7 @@ def text_to_speech(api_key, text, output_path="output/response_audio.wav"):
     audio_data = client.tts.bytes(
         model_id="sonic",
         transcript=text,
-        voice_id="694f9389-aac1-45b6-b726-9d9369183238",
+        voice_id="8d110413-2f14-44a2-8203-2104db4340e9",
         output_format={"container": "wav", "encoding": "pcm_f32le", "sample_rate": 44100},
     )
 

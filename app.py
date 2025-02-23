@@ -89,7 +89,7 @@ def process_video_endpoint():
     local_ai_video_path = os.path.join(OUTPUT_FOLDER, ai_video_filename)
 
     job_id = generate_video(sync_api_key,
-        "https://lfldehquopamazavycth.supabase.co/storage/v1/object/public/sync-public/david_demo_shortvid.mp4",
+        "https://www.dropbox.com/scl/fi/ac4321y0somt6nkqk14n8/person_talking.mp4.mp4?rlkey=6sf3u7o4s4s4dr4uvbyt98qqp&st=8l6yipox&raw=1",
         audio_url
     )
     if not job_id:
