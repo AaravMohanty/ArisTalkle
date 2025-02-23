@@ -94,6 +94,7 @@ def extract_scores_from_tex(tex_file_path, json_file_path):
     with open(tex_file_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
+            # print("ANALYZING LINE:" + line)
             # Must contain "\item" and "/100"
             if line.startswith(r"\item") and "/100" in line:
                 # e.g. "\item Tone/Inflection: 65/100"

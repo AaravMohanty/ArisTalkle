@@ -1,10 +1,11 @@
 import os
 import time
-from flask import Flask, request, jsonify, send_from_directory
+import json
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 
 # --- Import AI Logic Files ---
-from Gemini import generate_debate_response
+from Gemini import generate_debate_response, generate_rubric, extract_scores_from_tex
 from Text_To_Speech import text_to_speech
 from fullSpeechToVideo import generate_video, poll_and_download
 
@@ -110,6 +111,38 @@ def process_video_endpoint():
 def serve_video(filename):
     """Serves the generated AI video locally."""
     return send_from_directory(OUTPUT_FOLDER, filename, as_attachment=False)
+
+@app.route("/download_rubric", methods=["GET"])
+def download_rubric():
+    """Generates and serves the rubric LaTeX file to the frontend."""
+    ai_video_filename = "output_video.mp4"
+    video_path = os.path.join(OUTPUT_FOLDER, ai_video_filename)
+
+    try:
+        rubric_path = generate_rubric(os.getenv("GOOGLE_GENAI_API_KEY"), video_path)
+        if os.path.exists(rubric_path):
+            return send_file(rubric_path, as_attachment=True)
+        return jsonify({"error": "Rubric file not found"}), 404
+    except Exception as e:
+        return jsonify({"error": f"Failed to generate rubric: {str(e)}"}), 500
+
+@app.route("/extract_scores", methods=["GET"])
+def extract_scores():
+    """Extracts scores from the generated rubric and returns them as JSON."""
+    tex_file_path = "output/rubric.tex"
+    json_file_path = "output/scores.json"
+
+    try:
+        extract_scores_from_tex(tex_file_path, json_file_path)
+
+        # Load the extracted scores from the JSON file
+        with open(json_file_path, "r", encoding="utf-8") as f:
+            scores_data = json.load(f)
+
+        print("Extracted Scores:", scores_data)  # ✅ Log extracted scores
+        return jsonify(scores_data)
+    except Exception as e:
+        return jsonify({"error": f"Failed to extract scores: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
