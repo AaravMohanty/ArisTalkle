@@ -62,7 +62,7 @@ def poll_and_download(api_key, job_id):
 
     # Use an absolute path for the output directory
     base_dir = os.path.abspath(os.path.dirname(__file__))
-    output_dir = os.path.join(base_dir, "Output")
+    output_dir = os.path.join(base_dir, "output")
 
     # Create the directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
