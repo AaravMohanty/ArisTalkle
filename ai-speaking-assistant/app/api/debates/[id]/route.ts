@@ -16,29 +16,29 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-  try {
-    await dbConnect()
-    const { stage, userResponse } = await req.json()
+// export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+//   try {
+//     await dbConnect()
+//     const { stage, userResponse } = await req.json()
 
-    const debate = await Debate.findById(params.id)
-    if (!debate) {
-      return NextResponse.json({ error: "Debate not found" }, { status: 404 })
-    }
+//     const debate = await Debate.findById(params.id)
+//     if (!debate) {
+//       return NextResponse.json({ error: "Debate not found" }, { status: 404 })
+//     }
 
-    // Update the user response for the current stage
-    debate.transcript[stage].userResponse = userResponse
+//     // Update the user response for the current stage
+//     debate.transcript[stage].userResponse = userResponse
 
-    // TODO: Generate AI response
-    const aiResponse = "This is a placeholder AI response."
-    debate.transcript[stage].aiResponse = aiResponse
+//     // TODO: Generate AI response
+//     const aiResponse = "This is a placeholder AI response."
+//     debate.transcript[stage].aiResponse = aiResponse
 
-    await debate.save()
+//     await debate.save()
 
-    return NextResponse.json(debate)
-  } catch (error) {
-    console.error("Error updating debate:", error)
-    return NextResponse.json({ error: "Failed to update debate" }, { status: 500 })
-  }
-}
+//     return NextResponse.json(debate)
+//   } catch (error) {
+//     console.error("Error updating debate:", error)
+//     return NextResponse.json({ error: "Failed to update debate" }, { status: 500 })
+//   }
+// }
 
