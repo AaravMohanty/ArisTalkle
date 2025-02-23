@@ -15,7 +15,7 @@ import {
 const inter = Inter({subsets: ["latin"]})
 
 export const metadata: Metadata = {
-    title: "AI Public Speaking Assistant",
+    title: "ArisTalkle - AI Public Speaking Assistant",
     description: "Hone your argumentation and presentation skills through interactive, structured debates",
     generator: 'v0.dev'
 }
