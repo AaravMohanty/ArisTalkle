@@ -1,24 +1,38 @@
-import mongoose from "mongoose"
+const mongoose = require("mongoose");
 
 const TranscriptSchema = new mongoose.Schema({
-  userResponse: { type: String, required: true },
-  aiResponse: { type: String, required: true },
-})
+    text: {type: String,},
+    aiFeedback: {type: String},
+});
 
 const DebateSchema = new mongoose.Schema(
-  {
-    topic: { type: String, required: true },
-    difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true },
-    transcript: {
-      opening: { type: TranscriptSchema, required: true },
-      questioning: { type: TranscriptSchema, required: true },
-      rebuttals: { type: TranscriptSchema, required: true },
-      closingStatements: { type: TranscriptSchema, required: true },
+    {
+        userId: {type: String, required: true}, // From clerk
+        date: {type: Date, default: Date.now}, // Stores date of debate
+        topic: {type: String},
+        difficulty: {type: String, enum: ["Easy", "Medium", "Hard"],},
+        competitionLevel: {
+            type: String,
+            enum: ["Elementary School", "High School", "University"],
+        },
+        transcript: {
+            opening: {type: TranscriptSchema,},
+            questioning: {type: TranscriptSchema,},
+            rebuttals: {type: TranscriptSchema,},
+            closingStatements: {type: TranscriptSchema,},
+        },
+        rubricScores: {
+            toneInflection: {type: Number, min: 0, max: 10, default: 0},
+            information: {type: Number, min: 0, max: 10, default: 0},
+            useOfFactsStatistics: {type: Number, min: 0, max: 10, default: 0},
+            organization: {type: Number, min: 0, max: 10, default: 0},
+            understandingOfTopic: {type: Number, min: 0, max: 10, default: 0},
+        },
+        overallScore: {type: Number, min: 0, max: 100, default: 0}, // Total score based on rubric
+        completed: {type: Boolean, default: false},
     },
-    score: { type: Number, min: 0, max: 100, default: 0 },
-  },
-  { timestamps: true }, // Automatically adds createdAt & updatedAt fields
-)
+    {timestamps: true} // Automatically adds createdAt & updatedAt fields
+);
 
-export default mongoose.models.Debate || mongoose.model("Debate", DebateSchema)
-
+const Debate = mongoose.models.Debate || mongoose.model("Debate", DebateSchema);
+export default Debate;

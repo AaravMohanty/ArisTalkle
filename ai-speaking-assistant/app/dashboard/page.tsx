@@ -19,10 +19,11 @@ const pastDebates = [
 ]
 
 const skillProgress = [
-    { name: "Argumentation", progress: 75 },
-    { name: "Voice Modulation", progress: 60 },
-    { name: "Body Language", progress: 80 },
-    { name: "Storytelling", progress: 70 },
+    { name: "Tone/Inflection", progress: 75 },
+    { name: "Information", progress: 60 },
+    { name: "Use of Facts/Statistics", progress: 80 },
+    { name: "Organization", progress: 70 },
+    { name: "Understanding of Topic", progress: 70 },
 ]
 
 const achievements = [
@@ -74,7 +75,6 @@ export default function Dashboard() {
                     <TabsTrigger value="past-debates">Past Debates</TabsTrigger>
                     <TabsTrigger value="skill-progress">Skill Progress</TabsTrigger>
                     <TabsTrigger value="achievements">Achievements</TabsTrigger>
-                    <TabsTrigger value="calendar">Calendar</TabsTrigger>
                 </TabsList>
                 <TabsContent value="past-debates">
                     <Card>
@@ -143,17 +143,6 @@ export default function Dashboard() {
                                     </Card>
                                 ))}
                             </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="calendar">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Debate Calendar</CardTitle>
-                            <CardDescription>Schedule and view your upcoming debates</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
                         </CardContent>
                     </Card>
                 </TabsContent>

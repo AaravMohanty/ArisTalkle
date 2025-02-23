@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { SignedOut, SignedIn, SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import { SignedOut, SignedIn, SignInButton, SignUpButton, useUser, SignOutButton } from "@clerk/nextjs";
 
 export default function Header() {
     const { user } = useUser(); // Get user details
@@ -15,35 +15,41 @@ export default function Header() {
                     ArisTalkle
                 </Link>
                 <div className="space-x-4 flex items-center">
-                    <Link href="/debate" className="text-gray-600 hover:text-blue-600">
-                        Debate
-                    </Link>
-                    <Link href="/presentation-skills" className="text-gray-600 hover:text-blue-600">
-                        Presentation Skills
-                    </Link>
-
                     {/* Display when user is not signed in */}
                     <SignedOut>
-                        <SignInButton mode="modal" asChild>
+                        <SignInButton>
                             <Button variant="outline">Sign In</Button>
                         </SignInButton>
 
-                        <SignUpButton mode="modal" asChild>
+                        <SignUpButton>
                             <Button>Sign Up</Button>
                         </SignUpButton>
                     </SignedOut>
 
                     {/* Display when user is signed in */}
                     <SignedIn>
-                        <Link href="/dashboard" className="text-gray-600 hover:text-blue-600">
-                            Dashboard
-                        </Link>
+                        <div className="flex items-center space-x-4">
+                            <Link href="/debate" className="text-gray-600 hover:text-blue-600">
+                                Debate
+                            </Link>
+                            <Link href="/presentation-skills" className="text-gray-600 hover:text-blue-600">
+                                Presentation Skills
+                            </Link>
+                            <Link href="/dashboard" className="text-gray-600 hover:text-blue-600">
+                                Dashboard
+                            </Link>
 
+                            {/* Sign Out Button */}
+                            <SignOutButton>
+                                <Button variant="outline">Sign Out</Button>
+                            </SignOutButton>
+
+                            {/* Avatar */}
                             <Avatar>
                                 <AvatarImage src={user?.imageUrl || ""} alt="User Avatar" />
                                 <AvatarFallback>{user?.firstName?.charAt(0) || "U"}</AvatarFallback>
                             </Avatar>
-                        {/*<UserButton />*/}
+                        </div>
                     </SignedIn>
                 </div>
             </nav>

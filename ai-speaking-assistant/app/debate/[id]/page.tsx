@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const debateStages = ["opening", "questioning", "rebuttals", "closingStatements"]
+const debateStages = ["Opening", "Questioning", "Rebuttals", "Closing Statements"]
 
 export default function DebateRoom({ params }: { params: { id: string } }) {
   const router = useRouter()

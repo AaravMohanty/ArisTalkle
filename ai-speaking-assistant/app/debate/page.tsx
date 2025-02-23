@@ -7,32 +7,36 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {useUser} from "@clerk/nextjs";
 
 export default function DebatePage() {
   const [topic, setTopic] = useState("")
   const [difficulty, setDifficulty] = useState("")
   const router = useRouter()
+  const { user } = useUser()
 
   const startDebate = async () => {
-    if (topic && difficulty) {
+    if (topic && difficulty && user) {
       try {
         const response = await fetch("/api/debates", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ topic, difficulty }),
+          body: JSON.stringify({ topic, difficulty, userId: user.id }),
         })
 
         if (response.ok) {
           const debate = await response.json()
           router.push(`/debate/${debate._id}`)
         } else {
-          console.error("Failed to create debate")
+          console.error("Sever error: Failed to create debate")
         }
       } catch (error) {
         console.error("Error creating debate:", error)
       }
+    } else {
+      console.error("Failed to create debate: topic/difficulty/userid not found")
     }
   }
 
