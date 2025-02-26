@@ -20,8 +20,7 @@ OUTPUT_FOLDER = "output"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://hgwxrywkyjaiasxvksko.supabase.co")  # replace with your project URL
-SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnd3hyeXdreWphaWFzeHZrc2tvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAyOTM3NjgsImV4cCI6MjA1NTg2OTc2OH0.3YdP00gIX-sjllivsoENgNe-d6oiewEx41YrTGzXlsE")     # replace with your anon key
+# REMOVED ENV VARS
 BUCKET_NAME = "audio-bucket"  # must exist & be publicly readable in Supabase
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
