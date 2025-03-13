@@ -23,7 +23,7 @@ const debateStages = [
 export default function DebateRoom({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [debate, setDebate] = useState<any>(null);
-  const [currentStage, setCurrentStage] = useState(0);
+  const [currentStage, setCurrentStage] = useState(3);
   const [videoUploaded, setVideoUploaded] = useState(false);
   const [AIResponse, setAIResponse] = useState<string | null>(null);
   const [videoPlayed, setVideoPlayed] = useState(false); // ✅ Track if video finished

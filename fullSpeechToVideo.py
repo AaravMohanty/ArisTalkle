@@ -69,15 +69,16 @@ def poll_and_download(api_key, job_id):
 
     print(f"Checking status for Job ID: {job_id}")
 
+    secs = 0
     # Polling loop
     while True:
         response = requests.get(url, headers=headers)
-
+        
         if response.status_code == 200:
             data = response.json()
             status = data.get("status")
 
-            print(f"Current Status: {status}")
+            print(f"Current Status: {status}\nElapsed time: {secs}")
 
             if status == "COMPLETED":
                 output_url = data.get("outputUrl")
@@ -113,5 +114,6 @@ def poll_and_download(api_key, job_id):
 
         # Wait 5 seconds before checking again
         time.sleep(5)
+        secs += 5
 
     print("Process completed.")
