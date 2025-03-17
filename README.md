@@ -1,5 +1,8 @@
 # ArisTalkle
 
+## Demo
+https://www.youtube.com/watch?v=fUiFaVJi6Oo&ab_channel=PradyumChitlu
+
 ## Overview
 
 ArisTalkle is a Flask-based application that allows users to engage in structured debates with AI-generated responses. The system processes user-uploaded videos, generates debate responses using Google Gemini AI, converts responses into speech, and synchronizes speech with an AI-generated video.
