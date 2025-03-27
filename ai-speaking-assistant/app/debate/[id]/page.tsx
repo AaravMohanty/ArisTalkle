@@ -3,13 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, UploadCloud } from "lucide-react"; // Icons
@@ -25,12 +19,16 @@ const debateStages = [
 // Helper function to format difficulty
 const formatDifficulty = (difficulty: string | undefined): string => {
   switch (difficulty) {
-    case "Easy": return "Elementary";
-    case "Medium": return "High School";
-    case "Hard": return "University";
-    default: return "Unknown Level";
+    case "Easy":
+      return "Elementary";
+    case "Medium":
+      return "High School";
+    case "Hard":
+      return "University";
+    default:
+      return "Unknown Level";
   }
-}
+};
 
 export default function DebateRoom({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -46,8 +44,8 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
   // Define card styles consistent with the dark theme
   const cardBaseClasses = "bg-gray-900/60 border border-gray-700/50 backdrop-blur-sm rounded-xl shadow-lg";
   // Define input/select styles
-  const inputBaseClasses = "bg-gray-800/70 border-gray-700 focus:border-blue-500 focus:ring-blue-500/50 text-gray-200 placeholder:text-gray-500 rounded-md shadow-sm";
-
+  const inputBaseClasses =
+    "bg-gray-800/70 border-gray-700 focus:border-blue-500 focus:ring-blue-500/50 text-gray-200 placeholder:text-gray-500 rounded-md shadow-sm";
 
   useEffect(() => {
     const fetchDebate = async () => {
@@ -116,10 +114,10 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
             headers: { "Content-Type": "application/json" },
             // Send necessary info like video path, maybe debate context?
             body: JSON.stringify({
-                video_path: uploadData.video_path,
-                stage: debateStages[currentStageIndex].id, // Send stage context
-                topic: debate?.topic, // Send topic context
-                difficulty: debate?.difficulty // Send difficulty context
+              video_path: uploadData.video_path,
+              stage: debateStages[currentStageIndex].id, // Send stage context
+              topic: debate?.topic, // Send topic context
+              difficulty: debate?.difficulty, // Send difficulty context
             }),
           }
         );
@@ -133,7 +131,6 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
 
         // Assume processData.video_url is the URL to the AI's response video
         setAiVideoUrl(processData.video_url);
-
       } catch (error: any) {
         console.error("Error during upload/processing:", error);
         setError(error.message || "An unexpected error occurred during video handling.");
@@ -142,9 +139,9 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
         setIsProcessing(false); // Processing finished (successfully or not)
       }
     }
-     // Reset file input to allow re-uploading the same file if needed
-     if (e.target) {
-        e.target.value = '';
+    // Reset file input to allow re-uploading the same file if needed
+    if (e.target) {
+      e.target.value = "";
     }
   };
 
@@ -162,7 +159,7 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
       setVideoPlayed(false);
       // Reset video player if needed
       if (videoRef.current) {
-          videoRef.current.src = ''; // Clear source
+        videoRef.current.src = ""; // Clear source
       }
     }
   };
@@ -170,23 +167,26 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
   // Loading state for initial debate data fetch
   if (!debate && !error) {
     return (
-        <div className="bg-gradient-to-br from-gray-950 via-black to-gray-900 text-gray-400 min-h-screen font-sans flex flex-col justify-center items-center px-4 py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-400 mb-4" />
-            <p>Loading Debate Environment...</p>
-        </div>
+      <div className="bg-gradient-to-br from-gray-950 via-black to-gray-900 text-gray-400 min-h-screen font-sans flex flex-col justify-center items-center px-4 py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-400 mb-4" />
+        <p>Loading Debate Environment...</p>
+      </div>
     );
   }
 
-   // Error state for initial debate data fetch
+  // Error state for initial debate data fetch
   if (error && !debate) {
     return (
-        <div className="bg-gradient-to-br from-gray-950 via-black to-gray-900 text-red-400 min-h-screen font-sans flex flex-col justify-center items-center px-4 py-12">
-            <p className="text-lg mb-4">Error Loading Debate</p>
-            <p className="text-sm text-center">{error}</p>
-            <Button variant="outline" className="mt-6 border-gray-600 text-gray-300 hover:bg-gray-800" onClick={() => router.push('/dashboard')}>
-                Back to Dashboard
-            </Button>
-        </div>
+      <div className="bg-gradient-to-br from-gray-950 via-black to-gray-900 text-red-400 min-h-screen font-sans flex flex-col justify-center items-center px-4 py-12">
+        <p className="text-lg mb-4">Error Loading Debate</p>
+        <p className="text-sm text-center">{error}</p>
+        <Button
+          variant="outline"
+          className="mt-6 border-gray-600 text-gray-300 hover:bg-gray-800"
+          onClick={() => router.push("/dashboard")}>
+          Back to Dashboard
+        </Button>
+      </div>
     );
   }
 
@@ -205,25 +205,19 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
         </div>
 
         {/* Progress Indicator */}
-        <div className="mb-8 md:mb-10">
-          <ProgressIndicator
-            currentStageIndex={currentStageIndex}
-            stages={debateStages}
-          />
+        <div className="mb-8 md:mb-16">
+          <ProgressIndicator currentStageIndex={currentStageIndex} stages={debateStages} />
         </div>
 
         {/* Main Content Card */}
         <Card className={`max-w-3xl mx-auto ${cardBaseClasses}`}>
           <CardHeader className="border-b border-gray-700/50 pb-4">
-            <CardTitle className="text-xl md:text-2xl text-center text-blue-300">
-              Stage: {currentStageData.label}
-            </CardTitle>
+            <CardTitle className="text-xl md:text-2xl text-center text-blue-300">Stage: {currentStageData.label}</CardTitle>
             <CardDescription className="text-center text-gray-500 pt-1">
-               Opponent Level: {formatDifficulty(debate?.difficulty)}
+              Opponent Level: {formatDifficulty(debate?.difficulty)}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
-
             {/* Conditional Rendering based on state */}
             {!isUploading && !isProcessing && !aiVideoUrl && (
               // State 1: Ready for Upload
@@ -254,11 +248,11 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
             {(isUploading || isProcessing) && !aiVideoUrl && (
               // State 2: Uploading or Processing
               <div className="text-center py-10">
-                 <Loader2 className="w-8 h-8 mx-auto animate-spin text-blue-400 mb-4" />
-                 <p className="text-gray-400">
-                   {isUploading ? "Uploading your video..." : "Aristotle is analyzing and preparing a response..."}
-                 </p>
-                 {/* Optional: Show a progress bar if possible */}
+                <Loader2 className="w-8 h-8 mx-auto animate-spin text-blue-400 mb-4" />
+                <p className="text-gray-400">
+                  {isUploading ? "Uploading your video..." : "Aristotle is analyzing and preparing a response..."}
+                </p>
+                {/* Optional: Show a progress bar if possible */}
               </div>
             )}
 
@@ -267,33 +261,29 @@ export default function DebateRoom({ params }: { params: { id: string } }) {
               <div>
                 <h3 className="font-semibold mb-3 text-lg text-gray-100">Aristotle's Response:</h3>
                 <div className="aspect-video bg-black rounded-lg overflow-hidden border border-gray-700 shadow-inner">
-                    <video
-                      ref={videoRef} // Add ref
-                      key={aiVideoUrl} // Force re-render if URL changes
-                      className="w-full h-full"
-                      controls
-                      onEnded={() => setVideoPlayed(true)}
-                      onPlay={() => setVideoPlayed(false)} // Reset if user replays
-                    >
-                      <source src={aiVideoUrl} type="video/mp4" /> {/* Adjust type if needed */}
-                      Your browser does not support the video tag.
-                    </video>
+                  <video
+                    ref={videoRef} // Add ref
+                    key={aiVideoUrl} // Force re-render if URL changes
+                    className="w-full h-full"
+                    controls
+                    onEnded={() => setVideoPlayed(true)}
+                    onPlay={() => setVideoPlayed(false)} // Reset if user replays
+                  >
+                    <source src={aiVideoUrl} type="video/mp4" /> {/* Adjust type if needed */}
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
                 <Button
                   className="mt-6 w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold py-2.5 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   onClick={handleProceed}
-                  disabled={!videoPlayed || isUploading || isProcessing}
-                >
-                  {currentStageIndex === debateStages.length - 1
-                    ? "Finish Debate & View Results"
-                    : "Proceed to Next Stage"}
+                  disabled={!videoPlayed || isUploading || isProcessing}>
+                  {currentStageIndex === debateStages.length - 1 ? "Finish Debate & View Results" : "Proceed to Next Stage"}
                 </Button>
                 {!videoPlayed && <p className="text-xs text-center text-gray-500 mt-2">Watch the full response to proceed.</p>}
-                 {/* Display upload/processing errors here */}
-                 {error && <p className="text-sm text-red-400 mt-4">{error}</p>}
+                {/* Display upload/processing errors here */}
+                {error && <p className="text-sm text-red-400 mt-4">{error}</p>}
               </div>
             )}
-
           </CardContent>
         </Card>
       </div>
@@ -312,46 +302,49 @@ function ProgressIndicator({
   return (
     <div className="flex items-center justify-center space-x-1 md:space-x-2 max-w-xl mx-auto">
       {stages.map((stage, index) => (
-        <div key={stage.id} className={`flex-1 flex items-center ${index > 0 ? 'justify-start' : 'justify-end'}`}>
+        <div key={stage.id} className={`flex-1 flex items-center ${index > 0 ? "justify-start" : "justify-end"}`}>
           {/* Connector Line (except for the first item) */}
-          {index > 0 && (
-            <div
-              className={`h-0.5 w-full ${
-                index <= currentStageIndex ? "bg-cyan-500" : "bg-gray-700"
-              }`}
-            />
-          )}
+          {index > 0 && <div className={`h-0.5 w-full ${index <= currentStageIndex ? "bg-cyan-500" : "bg-gray-700"}`} />}
 
           {/* Step Circle and Label */}
           <div className="flex flex-col items-center mx-1 md:mx-2 shrink-0 relative">
-             <div
+            <div
               className={`w-6 h-6 md:w-7 md:h-7 rounded-full flex items-center justify-center border-2 transition-colors duration-300 ${
                 index === currentStageIndex
                   ? "bg-blue-500 border-blue-400 ring-2 ring-blue-500/50" // Current
                   : index < currentStageIndex
                   ? "bg-cyan-600 border-cyan-500" // Completed
                   : "bg-gray-800 border-gray-600" // Upcoming
-              }`}
-            >
-               {/* Optional: Checkmark for completed */}
-               {index < currentStageIndex && <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 md:h-4 md:w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-               {index === currentStageIndex && <span className="h-2 w-2 md:h-2.5 md:w-2.5 bg-white rounded-full animate-pulse"></span>}
+              }`}>
+              {/* Optional: Checkmark for completed */}
+              {index < currentStageIndex && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3 w-3 md:h-4 md:w-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+              {index === currentStageIndex && (
+                <span className="h-2 w-2 md:h-2.5 md:w-2.5 bg-white rounded-full animate-pulse"></span>
+              )}
             </div>
-             <span className={`absolute top-full mt-1.5 text-xs text-center w-24 md:w-28 ${
-                index === currentStageIndex ? 'text-blue-300 font-medium' : 'text-gray-400'
-             }`}>
-                {stage.label}
-             </span>
+            <span
+              className={`absolute top-full mt-1.5 text-xs text-center w-24 md:w-28 ${
+                index === currentStageIndex ? "text-blue-300 font-medium" : "text-gray-400"
+              }`}>
+              {stage.label}
+            </span>
           </div>
 
-           {/* Connector Line (except for the last item) */}
-           {index < stages.length - 1 && index === 0 && ( // Only the first one needs a trailing connector line here
-             <div
-              className={`h-0.5 w-full ${
-                index < currentStageIndex ? "bg-cyan-500" : "bg-gray-700"
-              }`}
-            />
-           )}
+          {/* Connector Line (except for the last item) */}
+          {index < stages.length - 1 &&
+            index === 0 && ( // Only the first one needs a trailing connector line here
+              <div className={`h-0.5 w-full ${index < currentStageIndex ? "bg-cyan-500" : "bg-gray-700"}`} />
+            )}
         </div>
       ))}
     </div>
