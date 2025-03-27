@@ -2,7 +2,26 @@ import os
 import time
 import subprocess
 import json
+import random
 from google import genai
+
+def with_exponential_backoff(func, max_retries=5, base_delay=1, max_delay=32, jitter=True):
+    """
+    Retries a function using exponential backoff strategy.
+    If the function raises an exception, it retries with increasing delay.
+    """
+    attempt = 0
+    while attempt < max_retries:
+        try:
+            return func()
+        except Exception as e:
+            wait_time = min(base_delay * (2 ** attempt), max_delay)
+            if jitter:
+                wait_time += random.uniform(0, 1)
+            print(f"Error: {e}. Retrying in {wait_time:.2f}s...")
+            time.sleep(wait_time)
+            attempt += 1
+    raise RuntimeError(f"Function failed after {max_retries} retries.")
 
 def generate_debate_response(api_key, video_path, difficulty="High School", side="Negation"):
     """
@@ -10,24 +29,32 @@ def generate_debate_response(api_key, video_path, difficulty="High School", side
     Returns the response text.
     """
     client = genai.Client(api_key=api_key)
-    video_file = client.files.upload(file=video_path)
+
+    video_file = with_exponential_backoff(lambda: client.files.upload(file=video_path))
 
     # Poll until processing finishes
-    while video_file.state.name == "PROCESSING":
-        time.sleep(1)
-        video_file = client.files.get(name=video_file.name)
+    def wait_for_processing():
+        while video_file.state.name == "PROCESSING":
+            time.sleep(1)
+            updated = client.files.get(name=video_file.name)
+            if updated.state.name == "FAILED":
+                raise ValueError("File processing failed.")
+            video_file.state = updated.state
+        return video_file
 
-    if video_file.state.name == "FAILED":
-        raise ValueError(f"File processing failed: {video_file.state.name}")
+    video_file = with_exponential_backoff(wait_for_processing)
 
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=[
-            video_file,
-            f"You are debating this speaker. Provide an argument for the {side} side, "
-            f"in under 200 words, at a {difficulty} level. Be to the point in the manner of a debater."
-        ]
-    )
+    def generate():
+        return client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=[
+                video_file,
+                f"You are debating this speaker. Provide an argument for the {side} side, "
+                f"in under 200 words, at a {difficulty} level. Be to the point in the manner of a debater."
+            ]
+        )
+
+    response = with_exponential_backoff(generate)
 
     return response.text
 
@@ -50,30 +77,28 @@ def generate_rubric(api_key, video_path, output_path="output/rubric.tex"):
         "page long max."
     )
 
-    # Request rubric from Gemini
-    rubric_response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=[video_path, rubric_prompt]
-    )
+    def generate():
+        return client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=[video_path, rubric_prompt]
+        )
 
-    # If there's extra fluff at the start or end, you can strip it here
+    rubric_response = with_exponential_backoff(generate)
+
     rubric_lines = rubric_response.text.split("\n")
     trimmed_rubric = "\n".join(rubric_lines[1:-1])  # optional trimming
 
-    # Write the LaTeX to file
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(trimmed_rubric)
 
-    # Compile LaTeX into PDF quietly
     try:
         subprocess.run(
             ["pdflatex", "-interaction=nonstopmode", "-output-directory", "output", output_path],
             check=True,
-            stdout=subprocess.DEVNULL,  # hide pdflatex console output
+            stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        # Cleanup auxiliary TeX files
         for ext in [".aux", ".log", ".out"]:
             aux_file = os.path.join("output", f"rubric{ext}")
             if os.path.exists(aux_file):
@@ -94,18 +119,13 @@ def extract_scores_from_tex(tex_file_path, json_file_path):
     with open(tex_file_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
-            # print("ANALYZING LINE:" + line)
-            # Must contain "\item" and "/100"
             if line.startswith(r"\item") and "/100" in line:
-                # e.g. "\item Tone/Inflection: 65/100"
-                # split on the first colon
                 parts = line.split(":", maxsplit=1)
                 if len(parts) == 2:
-                    category_part = parts[0].replace(r"\item", "").strip()  # e.g. "Tone/Inflection"
-                    score_part = parts[1].strip()  # e.g. "65/100"
-                    # Now split off the "/100"
+                    category_part = parts[0].replace(r"\item", "").strip()
+                    score_part = parts[1].strip()
                     if "/100" in score_part:
-                        score_value_str = score_part.split("/")[0].strip()  # e.g. "65"
+                        score_value_str = score_part.split("/")[0].strip()
                         try:
                             score_value = int(score_value_str)
                             scores[category_part] = score_value
